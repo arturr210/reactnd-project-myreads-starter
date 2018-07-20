@@ -23,7 +23,7 @@ body, .app {
 
 .list-books-content {
   padding: 0 0 80px;
-  flex: 1;
+/*  flex: 1;*/
 }
 
 .bookshelf {
@@ -110,9 +110,9 @@ body, .app {
   padding: 0;
   margin: 0;
 
-  display: flex;
+/*  display: flex;
   justify-content: center;
-  flex-wrap: wrap;
+  flex-wrap: wrap;*/
 }
 .books-grid li {
   padding: 10px 15px;
@@ -136,14 +136,14 @@ body, .app {
 .book-top {
   position: relative;
   height: 200px;
-  display: flex;
-  align-items: flex-end;
+/*  display: flex;
+  align-items: flex-end;*/
 }
 
 .book-shelf-changer {
   position: absolute;
   right: 0;
-  bottom: -10px;
+  bottom: 10px;
   width: 40px;
   height: 40px;
   border-radius: 50%;
