@@ -8,8 +8,6 @@ import {
 } from 'react-router-dom'
 import './App.css'
 import Test from './test'
-import Shelf2 from './shelf2'
-import Shelf3 from './shelf3'
 import Search from './search'
 
 
@@ -24,9 +22,17 @@ class BooksApp extends React.Component {
             query: '',
             shelfTest: '',
             allbooks: [],
-            showSearchPage: false
+            mergedbooks: [],
+            currently: 'currentlyReading',
+            want: 'wantToRead',
+            READ: 'read',
+
         };
+
+
     }
+
+
     componentDidMount() {
         BooksAPI.getAll().then((books) => {
             this.setState({
@@ -35,10 +41,16 @@ class BooksApp extends React.Component {
             console.log(this.state.allbooks)
         })
     }
+
+
+
+
     updateBookInfo(book, shelf) {
-        BooksAPI.update(book, shelf).then((books) => {
+
+        console.log(book)
+        BooksAPI.update(book, shelf).then((data) => {
             this.setState({
-                // allbooks:books,
+                // allbooks:book,
             })
             console.log(this.state.allbooks)
         })
@@ -78,10 +90,10 @@ class BooksApp extends React.Component {
         this.setState({
             shelfTest: book,
 
-
         })
 
         console.log(this.state.shelfTest)
+
     }
 
 
@@ -103,9 +115,19 @@ class BooksApp extends React.Component {
                     console.log(testbook)
 
 
-                    let testbookmega = testbook.map((test) => Object.assign(test, {
-                        shelf: 'blue'
-                    })) // blue.... ;-)
+                    let testbookmega = testbook.map((test) => {
+
+
+                            if (test.shelf !== "") {
+                                return (Object.assign(test, {
+                                    shelf: 'none'
+                                }))
+
+                            }
+                        }
+
+
+                    )
                     console.log(testbookmega)
 
                     this.setState({
@@ -132,6 +154,29 @@ class BooksApp extends React.Component {
     render() {
         console.log(this.state.allbooks)
 
+        let all = this.state.allbooks
+        let searched = this.state.searchedBook
+        var merged = {} // hashmap of books using  Id as keys
+
+        all.forEach(function(book) {
+            merged[book.id] = book;
+        });
+        // map new array  
+        var res = searched.map(function(sub) {
+            var book = merged[sub.id];
+            if (book) {
+                for (var key in book) {
+                    sub[key] = book[key]
+                }
+            }
+            return sub;
+        });
+
+        console.log(res, 'ff')
+
+
+
+
         const {
             query
         } = this.state;
@@ -148,16 +193,18 @@ class BooksApp extends React.Component {
               <Link className="close-search" to='/'>Close</Link>
               <div className="search-books-input-wrapper">
                 <input type="text" value={query} onChange={(event) => this.searchIt(event.target.value)} placeholder="Search by title or author"/>
-              </div>
-             </div> 
+              </div> 
+            </div>  
             <div className = "search-books-results" >
-            <ol  ><div><Search key={1} test={this.searchupdate}  update = {this.updateBookInfo}   books={this.state.searchedBook} /></div> </ol> 
+            <ol  ><div><Search key={1} test={this.searchupdate}  update = {this.updateBookInfo}   updbooks={this.state.allbooks} books={this.state.searchedBook} /></div> </ol> 
             </div> 
-            </div>
+             </div>
         )
-    }/>
-     
-   <Route exact path = '/'
+    }
+    />
+
+   
+    <Route exact path = '/'
     render = {
         () => (
             <div className="list-books" >
@@ -169,8 +216,8 @@ class BooksApp extends React.Component {
                 <div className="bookshelf">
                   <h2 className="bookshelf-title">Currently Reading</h2>
                   <div className="bookshelf-books"   >
-                    <ol className="books-grid"   >                      
-                         <Test test={  this.ontest} update = {this.updateBookInfo} books={this.state.allbooks} />
+                    <ol key={2}className="books-grid"   >                      
+                         <Test bookshelf={this.state.currently} key={3} test={  this.ontest} update = {this.updateBookInfo} books={this.state.allbooks} />
                     </ol>
                   </div>
                 </div>
@@ -178,7 +225,7 @@ class BooksApp extends React.Component {
                   <h2 className="bookshelf-title">Want to Read</h2>
                   <div className="bookshelf-books">
                     <ol className="books-grid" >                      
-                     <Shelf2 test={this.ontest} update = {this.updateBookInfo} books={this.state.allbooks} />
+                     <Test bookshelf={this.state.want} test={this.ontest} update = {this.updateBookInfo} books={this.state.allbooks} />
                    </ol>
                   </div>
                 </div>
@@ -186,7 +233,7 @@ class BooksApp extends React.Component {
                   <h2 className="bookshelf-title">Read</h2>
                   <div className="bookshelf-books">
                     <ol className="books-grid" >                    
-                     <Shelf3 test={this.ontest} update = {this.updateBookInfo} books={this.state.allbooks} />           
+                     <Test bookshelf={this.state.READ}test={this.ontest} update = {this.updateBookInfo} books={this.state.allbooks} />           
                     </ol>
                   </div>
                 </div>
@@ -198,119 +245,10 @@ class BooksApp extends React.Component {
           </div>
         )
     }
-    /> 
+    />  
     </div>
 )
 }
 }
 
 export default BooksApp
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-//       <div className="app">
-//         {this.state.showSearchPage ? (
-//           <div className="search-books">
-//             <div className="search-books-bar">
-//               <a className="close-search" onClick={() => this.setState({ showSearchPage: false })}>Close</a>
-//               <div className="search-books-input-wrapper">
-//                 <input type="text" value={query} onChange={(event) => this.searchIt(event.target.value)} placeholder="Search by title or author"/>
-//               </div>
-//             </div>
-//             <div className="search-books-results">
-//               <ol  ><div   ><Search  test={this.searchupdate}  update = {this.updateBookInfo}   books={this.state.searchedBook} /></div> </ol>
-//             </div>
-//           </div>
-//         ) : (
-//           <div className="list-books" >
-//             <div className="list-books-title">
-//               <h1>MyReads</h1>
-//             </div>
-//             <div className="list-books-content">
-//               <div>
-//                 <div className="bookshelf">
-//                   <h2 className="bookshelf-title">Currently Reading</h2>
-//                   <div className="bookshelf-books"   >
-//                     <ol className="books-grid"   >                      
-//                          <Test test={  this.ontest} update = {this.updateBookInfo} books={this.state.allbooks} />
-//                     </ol>
-//                   </div>
-//                 </div>
-//                 <div className="bookshelf">
-//                   <h2 className="bookshelf-title">Want to Read</h2>
-//                   <div className="bookshelf-books">
-//                     <ol className="books-grid" >                      
-//                      <Shelf2 test={this.ontest} update = {this.updateBookInfo} books={this.state.allbooks} />
-//                    </ol>
-//                   </div>
-//                 </div>
-//                 <div className="bookshelf">
-//                   <h2 className="bookshelf-title">Read</h2>
-//                   <div className="bookshelf-books">
-//                     <ol className="books-grid" >                    
-//                      <Shelf3 test={this.ontest} update = {this.updateBookInfo} books={this.state.allbooks} />           
-//                     </ol>
-//                   </div>
-//                 </div>
-//               </div>
-//             </div>
-//             <div className="open-search">
-//               <a onClick={() => this.setState({ showSearchPage: true })}>Add a book</a>
-//             </div>
-//           </div>
-//         )}
-//       </div>
-//     )
-//   }
-// }
-
-// export default BooksApp

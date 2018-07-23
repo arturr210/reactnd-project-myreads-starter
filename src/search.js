@@ -7,15 +7,6 @@ class Search extends Component {
 
 
 
-    state = {
-        book: [],
-        query: '',
-        addshelf: {
-            shelf: ''
-        }
-    }
-
-
 
     handleChange(bookid, event) {
         console.log(this.props.books[0])
@@ -35,7 +26,6 @@ class Search extends Component {
     }
 
 
-
     render() {
 
 
@@ -45,11 +35,11 @@ class Search extends Component {
             <div     style={{display: 'flex', flexFlow: 'row wrap', justifyContent: 'center'  }}>
  
        {this.props.books.map((book) => 
-     <li style={{padding:'10px 15px', listStyleType: 'none'}}><div     div className="book"  key={book.id}>
+     <li key={book.id} style={{padding:'10px 15px', listStyleType: 'none'}}><div  div className="book"  key={book.id}>
                           <div className="book-top">
                             <div className="book-cover" key={book.id} style={{ width: 128, height: 174, backgroundImage:  book.imageLinks ? 'url('+book.imageLinks.thumbnail+')' :''}}></div>
-                            <div className="book-shelf-changer">
-                              <select id="mySelect"  onChange={  this.handleChange.bind(this,book.id)} >
+                            <div className="book-shelf-changer">  
+                              <select value= {book.shelf } id="mySelect"  onChange={  this.handleChange.bind(this,book.id)} >
                                 <option value="move" disabled>Move to...</option>
                                 <option value='' style={{display:'none'}}> </option>
                                 <option value="currentlyReading">Currently Reading</option>

@@ -6,15 +6,11 @@ import './App.css'
 class Test extends Component {
 
 
-    state = {
-        shelf: 'currentlyReading'
-    }
-
 
 
     handleChange(bookid, event) {
         console.log(bookid)
-        var shelf = 'currentlyReading'
+        var shelf = ''
         shelf = event.target.value;
         var id = this.props.books.map((book) => {
             return (book.id === bookid ? book.shelf = shelf : book.shelf = book.shelf)
@@ -23,24 +19,28 @@ class Test extends Component {
 
         let kniga = this.props.books.filter((book) => book.id === bookid)
         this.props.test(kniga, id);
-
+        //this.props.update(kniga, id);
+        console.log(kniga)
+        this.props.update(kniga[0], event.target.value)
 
     }
 
 
     render() {
+
+
         return (
 
             <div  style={{display: 'flex', flexFlow: 'row wrap', justifyContent: 'center'}}>
-              
+            
 
-       {this.props.books.map((book)=>  { return (( book.shelf==='currentlyReading')  
+       {this.props.books.map((book)=>  { return (( book.shelf===this.props.bookshelf)  
 
-    ?   <li  ><div className="book" key={book.id} >
+    ?   <li key={book.id} ><div className="book" key={book.id} >
                           <div className="book-top">
                             <div className="book-cover" style={{ width: 128, height: 193, backgroundImage:  book.imageLinks ? 'url('+book.imageLinks.thumbnail+')' :'' }}></div>
                             <div className="book-shelf-changer">
-                              <select id="mySelect"  onChange={   this.handleChange.bind(this,book.id)}  >
+                              <select value={book.shelf} id="mySelect"  onChange={   this.handleChange.bind(this,book.id)}  >
                                 <option value="move" disabled>Move to...</option>
                                 <option value='' style={{display:'none'}}> </option>
                                 <option value="currentlyReading">Currently Reading</option>
